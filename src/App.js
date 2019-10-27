@@ -18,19 +18,15 @@ class App extends Component {
     super(props);
     this.state = {
       token: "",
-      session: "",
       from_year: 15,
       to_year: 16,
       sex: 0,
       is_loading: false,
       countrys: [],
       cities: [],
-      regions: [],
       country: null,
       city: null,
       region: null,
-      page: 1,
-      opened: false,
       current_id: 0,
       currentPanel: "main",
       sexs: [
