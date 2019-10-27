@@ -3,7 +3,6 @@ import { Component } from "react";
 import SettingsIcon from "@vkontakte/icons/dist/24/settings";
 import SearchIcon from "@vkontakte/icons/dist/24/search";
 import CancelIcon from "@vkontakte/icons/dist/24/cancel";
-import methods from "./lib.js";
 import {
   Panel,
   PanelHeader,
@@ -20,9 +19,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-  }
-  executeVkApi(method, params) {
-    return methods.executeVkApi(method, params, this.state.token);
   }
   render() {
     return (
