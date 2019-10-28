@@ -38,13 +38,15 @@ class App extends Component {
             >
               Начать поиск
             </CellButton>
-            <CellButton
-              before={<CancelIcon />}
-              onClick={() => this.props.onClear()}
-              level="danger"
-            >
-              Очистить список
-            </CellButton>
+            {this.props.filteredUsers.length !== 0 && (
+              <CellButton
+                before={<CancelIcon />}
+                onClick={() => this.props.onClear()}
+                level="danger"
+              >
+                Очистить список
+              </CellButton>
+            )}
           </Group>
         )}
         {this.props.filteredUsers.length > 0 && (

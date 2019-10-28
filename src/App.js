@@ -7,6 +7,7 @@ import AccessDeniedPanel from "./Panels/AccessDeniedPanel";
 import { View, ScreenSpinner } from "@vkontakte/vkui";
 import "@vkontakte/vkui/dist/vkui.css";
 import vkConnect from "@vkontakte/vk-connect";
+import { isUndefined } from "util";
 
 const app_id = 7185084;
 const v = "5.102";
@@ -21,19 +22,18 @@ class App extends Component {
       from_year: 15,
       to_year: 16,
       sex: 0,
+      has_photo: 1,
       is_loading: false,
       countrys: [],
       cities: [],
-      country: null,
-      city: null,
-      region: null,
+      country: "",
+      city: "",
+      region: "",
       current_id: 0,
       currentPanel: "main",
-      sexs: [
-        { id: 0, title: "Любой" },
-        { id: 1, title: "Женский" },
-        { id: 2, title: "Мужской" }
-      ],
+      status: 6,
+      rangeDate: [0, 86400],
+      q: "",
       filteredUsers: [],
       profile: {}
     };
@@ -53,6 +53,30 @@ class App extends Component {
   onSexUpdate(sex) {
     this.setState({ sex });
   }
+  onStatusUpdate(status) {
+    this.setState({ status });
+  }
+  onQUpdate(q) {
+    this.setState({ q });
+  }
+  onHasPhotoUpdate(has_photo) {
+    this.setState({ has_photo });
+  }
+  onRangeDateUpdate(rangeDate) {
+    this.setState({ rangeDate });
+  }
+  onClear() {
+    this.setState({ filteredUsers: [] });
+  }
+  toMain() {
+    this.setState({ currentPanel: "main" });
+  }
+  toSettings() {
+    this.setState({ currentPanel: "settings" });
+  }
+  toProfile(r) {
+    this.setState({ profile: r, currentPanel: "profile" });
+  }
 
   render() {
     return (
@@ -61,36 +85,30 @@ class App extends Component {
         popout={this.state.is_loading && <ScreenSpinner />}
       >
         <SettingsPanel
+          {...this.state}
           onCityUpdate={r => this.onCityUpdate(r)}
           onCountryUpdate={r => this.onCountryUpdate(r)}
           onYearUpdate={r => this.onYearUpdate(r)}
           onSexUpdate={r => this.onSexUpdate(r)}
-          onBack={() => this.setState({ currentPanel: "main" })}
-          sexs={this.state.sexs}
-          countrys={this.state.countrys}
-          cities={this.state.cities}
-          country={this.state.country}
-          city={this.state.city}
-          sex={this.state.sex}
-          from_year={this.state.from_year}
-          to_year={this.state.to_year}
+          onStatusUpdate={r => this.onStatusUpdate(r)}
+          onQUpdate={r => this.onQUpdate(r)}
+          onHasPhotoUpdate={r => this.onHasPhotoUpdate(r)}
+          onRangeDateUpdate={r => this.onRangeDateUpdate(r)}
+          onBack={() => this.toMain()}
           id="settings"
         />
         <MainPanel
-          is_loading={this.state.is_loading}
-          onProfile={r =>
-            this.setState({ profile: r, currentPanel: "profile" })
-          }
+          {...this.state}
+          onProfile={r => this.toProfile(r)}
           onSearch={() => this.searchUsers()}
-          onClear={() => this.setState({ filteredUsers: [] })}
-          onSettings={() => this.setState({ currentPanel: "settings" })}
-          filteredUsers={this.state.filteredUsers}
+          onClear={() => this.onClear()}
+          onSettings={() => this.toSettings()}
           id="main"
         />
         <AccessDeniedPanel onBack={() => this.authUser()} id="denied" />
         <ProfilePanel
           profile={this.state.profile}
-          onBack={() => this.setState({ currentPanel: "main" })}
+          onBack={() => this.toMain()}
           id="profile"
         />
       </View>
@@ -128,17 +146,21 @@ class App extends Component {
       for (const item of [
         ...state.filteredUsers,
         ...arr
-          .filter(
-            r =>
+          .filter(r => {
+            return (
               !r.blacklisted_by_me &&
               !r.blacklisted &&
               r.can_send_friend_request &&
               r.can_write_private_message &&
-              (!!r.last_seen
-                ? Date.now() / 1000 - r.last_seen.time < 3600 * 24
+              (!isUndefined(r.last_seen)
+                ? this.state.rangeDate[0] <=
+                    Date.now() / 1000 - r.last_seen.time &&
+                  Date.now() / 1000 - r.last_seen.time <=
+                    this.state.rangeDate[1]
                 : true) &&
               !r.is_closed
-          )
+            );
+          })
           .map(r => {
             r.oleg = this.RandomFromTo(0, 100);
             r.drugs = this.RandomFromTo(0, 100);
@@ -149,6 +171,13 @@ class App extends Component {
             r.kavkaz = this.RandomFromTo(0, 50);
             r.age = this.getYears(r.bdate, from_to_year);
             r.anime = this.RandomFromTo(0, 100);
+            r.secondsBefore = Date.now() / 1000 - r.last_seen.time;
+            r.timesBefore = [
+              Math.floor(r.secondsBefore % 60),
+              Math.floor(r.secondsBefore / 60) % 60,
+              Math.floor(r.secondsBefore / 3600) % 24,
+              Math.floor(r.secondsBefore / 86400)
+            ];
             return r;
           })
       ]) {
@@ -182,8 +211,9 @@ class App extends Component {
       fields:
         "last_seen,can_write_private_message,can_send_friend_request,blacklisted_by_me,blacklisted,photo_200,bdate,sex",
       sex: this.state.sex,
-      status: 6,
-      has_photo: 1,
+      status: this.state.status,
+      q: this.state.q,
+      has_photo: this.state.has_photo,
       country: this.state.country,
       city: this.state.city
     };

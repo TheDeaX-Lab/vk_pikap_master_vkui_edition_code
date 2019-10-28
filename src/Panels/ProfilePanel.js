@@ -15,6 +15,7 @@ import {
 import "@vkontakte/vkui/dist/vkui.css";
 class App extends Component {
   render() {
+    const { timesBefore } = this.props.profile;
     return (
       <Panel id="profile">
         <PanelHeader
@@ -34,6 +35,14 @@ class App extends Component {
                 <Avatar src={this.props.profile.photo_200} type="image" />
               }
               href={`https://vk.com/id${this.props.profile.id}`}
+              description={
+                "Была " +
+                (timesBefore[3] > 0 ? `${timesBefore[3]} дней ` : "") +
+                (timesBefore[2] > 0 ? `${timesBefore[2]} часов ` : "") +
+                (timesBefore[1] > 0 ? `${timesBefore[1]} минут ` : "") +
+                (timesBefore[0] > 0 ? `${timesBefore[0]} секунд ` : "") +
+                "назад"
+              }
             >
               {this.props.profile.first_name} {this.props.profile.last_name}
             </Cell>
@@ -99,9 +108,9 @@ class App extends Component {
                 }`
               ]
             ].map((item, k) => (
-              <Div key={k}>
+              <Cell key={k}>
                 <InfoRow title={item[0]}>{item[1]}</InfoRow>
-              </Div>
+              </Cell>
             ))}
           </List>
         </Group>
