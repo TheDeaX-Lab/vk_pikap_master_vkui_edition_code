@@ -1,11 +1,9 @@
 import React from "react";
 import { Component } from "react";
-import BackIcon from "@vkontakte/icons/dist/24/back";
 import {
   Panel,
   PanelHeader,
   Group,
-  HeaderButton,
   RangeSlider,
   Select,
   FormStatus,
@@ -41,7 +39,6 @@ class App extends Component {
   }
   render() {
     const {
-      onBack,
       onCityUpdate,
       onCountryUpdate,
       onSexUpdate,
@@ -67,15 +64,7 @@ class App extends Component {
     } = { ...this.props, ...this.state };
     return (
       <Panel id="settings">
-        <PanelHeader
-          left={
-            <HeaderButton onClick={onBack}>
-              <BackIcon />
-            </HeaderButton>
-          }
-        >
-          Настройки поиска
-        </PanelHeader>
+        <PanelHeader>Настройки поиска</PanelHeader>
         <Group title="Настройка параметров для запроса данных">
           <FormLayout>
             <Input

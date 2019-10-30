@@ -3008,6 +3008,11 @@ css-color-names@0.0.4, css-color-names@^0.0.4:
   resolved "https://registry.yarnpkg.com/css-color-names/-/css-color-names-0.0.4.tgz#808adc2e79cf84738069b646cb20ec27beb629e0"
   integrity sha1-gIrcLnnPhHOAabZGyyDsJ762KeA=
 
+css-custom-properties@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/css-custom-properties/-/css-custom-properties-0.1.0.tgz#82f5a488689174cfbd2990d212eee5cc1f74b178"
+  integrity sha1-gvWkiGiRdM+9KZDSEu7lzB90sXg=
+
 css-declaration-sorter@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/css-declaration-sorter/-/css-declaration-sorter-4.0.1.tgz#c198940f63a76d7e36c1e71018b001721054cb22"

@@ -6,6 +6,7 @@
     "@vkontakte/icons": "^1.10.2",
     "@vkontakte/vk-connect": "^1.6.8",
     "@vkontakte/vkui": "^2.32.4",
+    "css-custom-properties": "^0.1.0",
     "prop-types": "^15.7.2",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",

@@ -4,10 +4,13 @@ import MainPanel from "./Panels/MainPanel";
 import SettingsPanel from "./Panels/SettingsPanel";
 import ProfilePanel from "./Panels/ProfilePanel";
 import AccessDeniedPanel from "./Panels/AccessDeniedPanel";
-import { View, ScreenSpinner } from "@vkontakte/vkui";
+import AboutPanel from "./Panels/AboutPanel";
+import { View, ScreenSpinner, Epic, Tabbar, TabbarItem } from "@vkontakte/vkui";
 import "@vkontakte/vkui/dist/vkui.css";
 import vkConnect from "@vkontakte/vk-connect";
 import { isUndefined } from "util";
+import SearchIcon from "@vkontakte/icons/dist/24/search";
+import SettingsIcon from "@vkontakte/icons/dist/24/settings";
 
 const app_id = 7185084;
 const v = "5.102";
@@ -68,6 +71,9 @@ class App extends Component {
   onClear() {
     this.setState({ filteredUsers: [] });
   }
+  toAbout() {
+    this.setState({ currentPanel: "about" });
+  }
   toMain() {
     this.setState({ currentPanel: "main" });
   }
@@ -80,46 +86,85 @@ class App extends Component {
 
   render() {
     return (
-      <View
-        activePanel={this.state.currentPanel}
-        popout={this.state.is_loading && <ScreenSpinner />}
+      <Epic
+        theme="client_dark"
+        activeStory="main_view"
+        tabbar={
+          this.state.currentPanel !== "profile" &&
+          !this.state.is_loading && (
+            <Tabbar>
+              <TabbarItem
+                onClick={() => this.toSettings()}
+                selected={this.state.currentPanel === "settings"}
+                data-story="settings"
+                text="Настройки"
+              >
+                <SettingsIcon />
+              </TabbarItem>
+              <TabbarItem
+                onClick={() => this.toMain()}
+                selected={this.state.currentPanel === "main"}
+                data-story="main"
+                text="Поиск"
+              >
+                <SearchIcon />
+              </TabbarItem>
+              <TabbarItem
+                onClick={() => this.toAbout()}
+                selected={this.state.currentPanel === "about"}
+                data-story="about"
+                text="О сервисе"
+              >
+                <SearchIcon />
+              </TabbarItem>
+            </Tabbar>
+          )
+        }
       >
-        <SettingsPanel
-          {...this.state}
-          onCityUpdate={r => this.onCityUpdate(r)}
-          onCountryUpdate={r => this.onCountryUpdate(r)}
-          onYearUpdate={r => this.onYearUpdate(r)}
-          onSexUpdate={r => this.onSexUpdate(r)}
-          onStatusUpdate={r => this.onStatusUpdate(r)}
-          onQUpdate={r => this.onQUpdate(r)}
-          onHasPhotoUpdate={r => this.onHasPhotoUpdate(r)}
-          onRangeDateUpdate={r => this.onRangeDateUpdate(r)}
-          onBack={() => this.toMain()}
-          id="settings"
-        />
-        <MainPanel
-          {...this.state}
-          onProfile={r => this.toProfile(r)}
-          onSearch={() => this.searchUsers()}
-          onClear={() => this.onClear()}
-          onSettings={() => this.toSettings()}
-          id="main"
-        />
-        <AccessDeniedPanel onBack={() => this.authUser()} id="denied" />
-        <ProfilePanel
-          profile={this.state.profile}
-          onBack={() => this.toMain()}
-          id="profile"
-        />
-      </View>
+        <View
+          activePanel={this.state.currentPanel}
+          popout={this.state.is_loading && <ScreenSpinner />}
+          id="main_view"
+        >
+          <SettingsPanel
+            {...this.state}
+            onCityUpdate={r => this.onCityUpdate(r)}
+            onCountryUpdate={r => this.onCountryUpdate(r)}
+            onYearUpdate={r => this.onYearUpdate(r)}
+            onSexUpdate={r => this.onSexUpdate(r)}
+            onStatusUpdate={r => this.onStatusUpdate(r)}
+            onQUpdate={r => this.onQUpdate(r)}
+            onHasPhotoUpdate={r => this.onHasPhotoUpdate(r)}
+            onRangeDateUpdate={r => this.onRangeDateUpdate(r)}
+            onBack={() => this.toMain()}
+            id="settings"
+          />
+          <MainPanel
+            {...this.state}
+            onProfile={r => this.toProfile(r)}
+            onSearch={() => this.searchUsers()}
+            onClear={() => this.onClear()}
+            onSettings={() => this.toSettings()}
+            id="main"
+          />
+
+          <AccessDeniedPanel onBack={() => this.authUser()} id="denied" />
+          <ProfilePanel
+            profile={this.state.profile}
+            onBack={() => this.toMain()}
+            id="profile"
+          />
+          <AboutPanel id="about" />
+        </View>
+      </Epic>
     );
   }
   authUser() {
-    this.setState({ currentPanel: "main" });
+    this.setState({ currentPanel: "main", is_loading: true });
     vkConnect
       .sendPromise("VKWebAppGetAuthToken", { app_id, scope: "friends" })
       .then(r => {
-        this.setState({ token: r.access_token });
+        this.setState({ token: r.access_token, is_loading: false });
         this.executeVkApi("database.getCountries", { count: 1000 }).then(r =>
           this.setState({ countrys: r.response.items })
         );
