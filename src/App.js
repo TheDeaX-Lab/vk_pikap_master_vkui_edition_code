@@ -11,6 +11,7 @@ import vkConnect from "@vkontakte/vk-connect";
 import { isUndefined } from "util";
 import SearchIcon from "@vkontakte/icons/dist/24/search";
 import SettingsIcon from "@vkontakte/icons/dist/24/settings";
+import InfoIcon from "@vkontakte/icons/dist/24/info";
 
 const app_id = 7185084;
 const v = "5.102";
@@ -38,7 +39,8 @@ class App extends Component {
       rangeDate: [0, 86400],
       q: "",
       filteredUsers: [],
-      profile: {}
+      profile: {},
+      transition: false
     };
   }
   onCountryUpdate(country_id) {
@@ -72,13 +74,13 @@ class App extends Component {
     this.setState({ filteredUsers: [] });
   }
   toAbout() {
-    this.setState({ currentPanel: "about" });
+    this.setState({ currentPanel: "about", is_loading: true });
   }
   toMain() {
-    this.setState({ currentPanel: "main" });
+    this.setState({ currentPanel: "main", is_loading: true });
   }
   toSettings() {
-    this.setState({ currentPanel: "settings" });
+    this.setState({ currentPanel: "settings", is_loading: true });
   }
   toProfile(r) {
     this.setState({ profile: r, currentPanel: "profile" });
@@ -95,8 +97,8 @@ class App extends Component {
             <Tabbar>
               <TabbarItem
                 onClick={() => this.toSettings()}
+                data-story="main_view"
                 selected={this.state.currentPanel === "settings"}
-                data-story="settings"
                 text="Настройки"
               >
                 <SettingsIcon />
@@ -104,7 +106,7 @@ class App extends Component {
               <TabbarItem
                 onClick={() => this.toMain()}
                 selected={this.state.currentPanel === "main"}
-                data-story="main"
+                data-story="main_view"
                 text="Поиск"
               >
                 <SearchIcon />
@@ -112,10 +114,10 @@ class App extends Component {
               <TabbarItem
                 onClick={() => this.toAbout()}
                 selected={this.state.currentPanel === "about"}
-                data-story="about"
+                data-story="main_view"
                 text="О сервисе"
               >
-                <SearchIcon />
+                <InfoIcon />
               </TabbarItem>
             </Tabbar>
           )
@@ -123,6 +125,7 @@ class App extends Component {
       >
         <View
           activePanel={this.state.currentPanel}
+          onTransition={() => this.setState({ is_loading: false })}
           popout={this.state.is_loading && <ScreenSpinner />}
           id="main_view"
         >
