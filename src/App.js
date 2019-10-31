@@ -74,13 +74,13 @@ class App extends Component {
     this.setState({ filteredUsers: [] });
   }
   toAbout() {
-    this.setState({ currentPanel: "about", is_loading: true });
+    this.setState({ currentPanel: "about", transition: true });
   }
   toMain() {
-    this.setState({ currentPanel: "main", is_loading: true });
+    this.setState({ currentPanel: "main", transition: true });
   }
   toSettings() {
-    this.setState({ currentPanel: "settings", is_loading: true });
+    this.setState({ currentPanel: "settings", transition: true });
   }
   toProfile(r) {
     this.setState({ profile: r, currentPanel: "profile" });
@@ -97,7 +97,8 @@ class App extends Component {
             <Tabbar>
               <TabbarItem
                 onClick={() =>
-                  this.state.currentPanel !== "settings"
+                  this.state.currentPanel !== "settings" &&
+                  !this.state.transition
                     ? this.toSettings()
                     : ""
                 }
@@ -109,7 +110,9 @@ class App extends Component {
               </TabbarItem>
               <TabbarItem
                 onClick={() =>
-                  this.state.currentPanel !== "main" ? this.toMain() : ""
+                  this.state.currentPanel !== "main" && !this.state.transition
+                    ? this.toMain()
+                    : ""
                 }
                 selected={this.state.currentPanel === "main"}
                 data-story="main_view"
@@ -119,7 +122,9 @@ class App extends Component {
               </TabbarItem>
               <TabbarItem
                 onClick={() =>
-                  this.state.currentPanel !== "about" ? this.toAbout() : ""
+                  this.state.currentPanel !== "about" && !this.state.transition
+                    ? this.toAbout()
+                    : ""
                 }
                 selected={this.state.currentPanel === "about"}
                 data-story="main_view"
@@ -133,7 +138,7 @@ class App extends Component {
       >
         <View
           activePanel={this.state.currentPanel}
-          onTransition={() => this.setState({ is_loading: false })}
+          onTransition={() => this.setState({ transition: false })}
           popout={this.state.is_loading && <ScreenSpinner />}
           id="main_view"
         >

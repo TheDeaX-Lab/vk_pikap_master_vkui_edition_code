@@ -35,6 +35,7 @@ class App extends Component {
               }
               description="Разработчик."
               href="https://vk.com/aleksandr_h2001"
+              target="_blank"
             >
               Александр Харитонов
             </Cell>
@@ -44,6 +45,7 @@ class App extends Component {
               }
               description="Дизайнер"
               href="https://vk.com/trup1199"
+              target="_blank"
             >
               Владислав Кучинов
             </Cell>
@@ -53,6 +55,7 @@ class App extends Component {
               }
               description="Создатель фраз для полей"
               href="https://vk.com/lapchanyn"
+              target="_blank"
             >
               Данил Попов
             </Cell>
@@ -62,6 +65,7 @@ class App extends Component {
               }
               description="Планировщик"
               href="https://vk.com/c_e_b_e_p"
+              target="_blank"
             >
               Максим Герасимов
             </Cell>
@@ -71,6 +75,7 @@ class App extends Component {
               }
               description="Тестировщик"
               href="https://vk.com/id256471621"
+              target="_blank"
             >
               Дмитрий Лыгин
             </Cell>
@@ -80,6 +85,7 @@ class App extends Component {
               }
               description="Идейный вдохновитель"
               href="https://vk.com/p_klight"
+              target="_blank"
             >
               Павел Пчёлкин
             </Cell>

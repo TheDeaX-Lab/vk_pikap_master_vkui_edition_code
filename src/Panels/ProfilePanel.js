@@ -35,6 +35,7 @@ class App extends Component {
                 <Avatar src={this.props.profile.photo_200} type="image" />
               }
               href={`https://vk.com/id${this.props.profile.id}`}
+              target="_blank"
               description={
                 "Была " +
                 (timesBefore[3] > 0 ? `${timesBefore[3]} дней ` : "") +
