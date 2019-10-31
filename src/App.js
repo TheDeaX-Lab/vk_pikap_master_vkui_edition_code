@@ -96,7 +96,11 @@ class App extends Component {
           !this.state.is_loading && (
             <Tabbar>
               <TabbarItem
-                onClick={() => this.toSettings()}
+                onClick={() =>
+                  this.state.currentPanel !== "settings"
+                    ? this.toSettings()
+                    : ""
+                }
                 data-story="main_view"
                 selected={this.state.currentPanel === "settings"}
                 text="Настройки"
@@ -104,7 +108,9 @@ class App extends Component {
                 <SettingsIcon />
               </TabbarItem>
               <TabbarItem
-                onClick={() => this.toMain()}
+                onClick={() =>
+                  this.state.currentPanel !== "main" ? this.toMain() : ""
+                }
                 selected={this.state.currentPanel === "main"}
                 data-story="main_view"
                 text="Поиск"
@@ -112,7 +118,9 @@ class App extends Component {
                 <SearchIcon />
               </TabbarItem>
               <TabbarItem
-                onClick={() => this.toAbout()}
+                onClick={() =>
+                  this.state.currentPanel !== "about" ? this.toAbout() : ""
+                }
                 selected={this.state.currentPanel === "about"}
                 data-story="main_view"
                 text="О сервисе"
