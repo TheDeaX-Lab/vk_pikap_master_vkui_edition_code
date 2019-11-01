@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 set -e
+python inc.py
 yarn build
 cd build
 git init

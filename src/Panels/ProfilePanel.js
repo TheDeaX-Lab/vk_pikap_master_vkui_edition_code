@@ -37,12 +37,20 @@ class App extends Component {
               href={`https://vk.com/id${this.props.profile.id}`}
               target="_blank"
               description={
-                "Была " +
-                (timesBefore[3] > 0 ? `${timesBefore[3]} дней ` : "") +
-                (timesBefore[2] > 0 ? `${timesBefore[2]} часов ` : "") +
-                (timesBefore[1] > 0 ? `${timesBefore[1]} минут ` : "") +
-                (timesBefore[0] > 0 ? `${timesBefore[0]} секунд ` : "") +
-                "назад"
+                !!timesBefore
+                  ? `Был${
+                      this.props.profile.sex === 1
+                        ? "а"
+                        : this.props.profile.sex === 0
+                        ? "о"
+                        : ""
+                    } ` +
+                    (timesBefore[3] > 0 ? `${timesBefore[3]} дней ` : "") +
+                    (timesBefore[2] > 0 ? `${timesBefore[2]} часов ` : "") +
+                    (timesBefore[1] > 0 ? `${timesBefore[1]} минут ` : "") +
+                    (timesBefore[0] > 0 ? `${timesBefore[0]} секунд ` : "") +
+                    "назад"
+                  : "Поле онлайна не доступно"
               }
             >
               {this.props.profile.first_name} {this.props.profile.last_name}

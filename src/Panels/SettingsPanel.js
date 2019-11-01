@@ -1,5 +1,7 @@
 import React from "react";
 import { Component } from "react";
+
+import BackIcon from "@vkontakte/icons/dist/24/back";
 import {
   Panel,
   PanelHeader,
@@ -8,6 +10,7 @@ import {
   Select,
   FormStatus,
   Input,
+  HeaderButton,
   FormLayout,
   FormLayoutGroup
 } from "@vkontakte/vkui";
@@ -64,8 +67,16 @@ class App extends Component {
     } = { ...this.props, ...this.state };
     return (
       <Panel id="settings">
-        <PanelHeader>Настройки поиска</PanelHeader>
-        <Group title="Настройка параметров для запроса данных">
+        <PanelHeader
+          left={
+            <HeaderButton onClick={() => this.props.onBack()}>
+              <BackIcon />
+            </HeaderButton>
+          }
+        >
+          Фильтр поиска
+        </PanelHeader>
+        <Group title="Параметры фильтра для запроса данных">
           <FormLayout>
             <Input
               type="text"
@@ -146,7 +157,7 @@ class App extends Component {
             </Select>
           </FormLayout>
         </Group>
-        <Group title="Параметры фильтра">
+        <Group title="Параметры дополнительного фильтра">
           <FormLayout>
             <FormLayoutGroup top="Временной диапозон онлайна">
               <Input

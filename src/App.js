@@ -10,9 +10,8 @@ import "@vkontakte/vkui/dist/vkui.css";
 import vkConnect from "@vkontakte/vk-connect";
 import { isUndefined } from "util";
 import SearchIcon from "@vkontakte/icons/dist/24/search";
-import SettingsIcon from "@vkontakte/icons/dist/24/settings";
 import InfoIcon from "@vkontakte/icons/dist/24/info";
-
+import version from "./version.txt";
 const app_id = 7185084;
 const v = "5.102";
 class App extends Component {
@@ -35,12 +34,12 @@ class App extends Component {
       region: "",
       current_id: 0,
       currentPanel: "main",
+      currentView: "main_view",
       status: 6,
       rangeDate: [0, 86400],
       q: "",
       filteredUsers: [],
-      profile: {},
-      transition: false
+      profile: {}
     };
   }
   onCountryUpdate(country_id) {
@@ -74,60 +73,56 @@ class App extends Component {
     this.setState({ filteredUsers: [] });
   }
   toAbout() {
-    this.setState({ currentPanel: "about", transition: true });
+    if (this.state.currentPanel !== "about") {
+      this.setState({
+        currentView: "about_view",
+        currentPanel: "about",
+        transition: true
+      });
+    }
   }
   toMain() {
-    this.setState({ currentPanel: "main", transition: true });
+    if (this.state.currentPanel !== "main") {
+      this.setState({
+        currentView: "main_view",
+        currentPanel: "main"
+      });
+    }
   }
   toSettings() {
-    this.setState({ currentPanel: "settings", transition: true });
+    if (this.state.currentPanel !== "settings") {
+      this.setState({ currentPanel: "settings", currentView: "main_view" });
+    }
   }
   toProfile(r) {
-    this.setState({ profile: r, currentPanel: "profile" });
+    if (this.state.currentPanel !== "settings") {
+      this.setState({
+        currentView: "main_view",
+        profile: r,
+        currentPanel: "profile"
+      });
+    }
   }
 
   render() {
     return (
       <Epic
-        theme="client_dark"
-        activeStory="main_view"
+        activeStory={this.state.currentView}
         tabbar={
-          this.state.currentPanel !== "profile" &&
           !this.state.is_loading && (
             <Tabbar>
               <TabbarItem
-                onClick={() =>
-                  this.state.currentPanel !== "settings" &&
-                  !this.state.transition
-                    ? this.toSettings()
-                    : ""
-                }
-                data-story="main_view"
-                selected={this.state.currentPanel === "settings"}
-                text="Настройки"
-              >
-                <SettingsIcon />
-              </TabbarItem>
-              <TabbarItem
-                onClick={() =>
-                  this.state.currentPanel !== "main" && !this.state.transition
-                    ? this.toMain()
-                    : ""
-                }
-                selected={this.state.currentPanel === "main"}
+                onClick={() => this.toMain()}
+                selected={this.state.currentView === "main_view"}
                 data-story="main_view"
                 text="Поиск"
               >
                 <SearchIcon />
               </TabbarItem>
               <TabbarItem
-                onClick={() =>
-                  this.state.currentPanel !== "about" && !this.state.transition
-                    ? this.toAbout()
-                    : ""
-                }
-                selected={this.state.currentPanel === "about"}
-                data-story="main_view"
+                onClick={() => this.toAbout()}
+                selected={this.state.currentView === "about_view"}
+                data-story="about_view"
                 text="О сервисе"
               >
                 <InfoIcon />
@@ -138,7 +133,6 @@ class App extends Component {
       >
         <View
           activePanel={this.state.currentPanel}
-          onTransition={() => this.setState({ transition: false })}
           popout={this.state.is_loading && <ScreenSpinner />}
           id="main_view"
         >
@@ -157,6 +151,7 @@ class App extends Component {
           />
           <MainPanel
             {...this.state}
+            toSettings={() => this.toSettings()}
             onProfile={r => this.toProfile(r)}
             onSearch={() => this.searchUsers()}
             onClear={() => this.onClear()}
@@ -170,6 +165,8 @@ class App extends Component {
             onBack={() => this.toMain()}
             id="profile"
           />
+        </View>
+        <View id="about_view" activePanel={this.state.currentPanel}>
           <AboutPanel id="about" />
         </View>
       </Epic>
@@ -198,6 +195,7 @@ class App extends Component {
       .catch(() => this.setState({ currentPanel: "denied" }));
   }
   componentDidMount() {
+    setInterval(() => this.updateHandler(), 30000);
     this.authUser();
   }
   appendUsers(arr, from_to_year) {
@@ -232,13 +230,17 @@ class App extends Component {
             r.kavkaz = this.RandomFromTo(0, 50);
             r.age = this.getYears(r.bdate, from_to_year);
             r.anime = this.RandomFromTo(0, 100);
-            r.secondsBefore = Date.now() / 1000 - r.last_seen.time;
-            r.timesBefore = [
-              Math.floor(r.secondsBefore % 60),
-              Math.floor(r.secondsBefore / 60) % 60,
-              Math.floor(r.secondsBefore / 3600) % 24,
-              Math.floor(r.secondsBefore / 86400)
-            ];
+            try {
+              r.secondsBefore = Date.now() / 1000 - r.last_seen.time;
+              r.timesBefore = [
+                Math.floor(r.secondsBefore % 60),
+                Math.floor(r.secondsBefore / 60) % 60,
+                Math.floor(r.secondsBefore / 3600) % 24,
+                Math.floor(r.secondsBefore / 86400)
+              ];
+            } catch {
+              r.timesBefore = false;
+            }
             return r;
           })
       ]) {
@@ -301,6 +303,11 @@ class App extends Component {
         params: { ...params, v, access_token: this.state.token }
       })
       .catch(() => this.executeVkApi(method, params));
+  }
+  updateHandler() {
+    fetch(version)
+      .then(r => r.text())
+      .catch(() => alert("Приложение устарело, очистите кеш!"));
   }
 }
 

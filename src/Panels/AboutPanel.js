@@ -7,13 +7,15 @@ import {
   Div,
   Cell,
   Avatar,
-  List
+  List,
+  InfoRow
 } from "@vkontakte/vkui";
 import "@vkontakte/vkui/dist/vkui.css";
+import version from "../version.txt";
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { version: 0 };
   }
   render() {
     return (
@@ -33,7 +35,7 @@ class App extends Component {
               before={
                 <Avatar src="https://sun1-83.userapi.com/c850632/v850632026/162203/6xhUuiuPuUQ.jpg?ava=1" />
               }
-              description="Разработчик."
+              description="Разработчик"
               href="https://vk.com/aleksandr_h2001"
               target="_blank"
             >
@@ -91,8 +93,21 @@ class App extends Component {
             </Cell>
           </List>
         </Group>
+        <Group title="Технические данные сервиса">
+          <Cell>
+            <InfoRow title="Версия приложения">
+              0.1v Build {this.state.version}
+            </InfoRow>
+          </Cell>
+        </Group>
       </Panel>
     );
+  }
+  componentDidMount() {
+    fetch(version)
+      .then(r => r.text())
+      .then(r => this.setState({ version: parseInt(r) }))
+      .catch(() => alert("Приложение было обновлено, пожалуйста очистите кеш"));
   }
 }
 
