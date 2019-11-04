@@ -4,6 +4,9 @@ import SearchIcon from "@vkontakte/icons/dist/24/search";
 import SettingsIcon from "@vkontakte/icons/dist/24/filter";
 import CancelIcon from "@vkontakte/icons/dist/24/cancel";
 import PayIcon from "@vkontakte/icons/dist/24/money_transfer";
+import UpIcon from "@vkontakte/icons/dist/24/up";
+import Icon24Advertising from "@vkontakte/icons/dist/24/advertising";
+import vkConnect from "@vkontakte/vk-connect";
 import {
   Panel,
   PanelHeader,
@@ -12,16 +15,25 @@ import {
   List,
   Avatar,
   Button,
-  Div
+  Div,
+  HeaderButton
 } from "@vkontakte/vkui";
+
 import "@vkontakte/vkui/dist/vkui.css";
-import vkConnect from "@vkontakte/vk-connect";
 const app_id = 7185084;
 class App extends Component {
   render() {
     return (
       <Panel id="main">
-        <PanelHeader>Поисковая система 2.0</PanelHeader>
+        <PanelHeader
+          left={
+            <HeaderButton onClick={() => window.scroll(0, 0)}>
+              <UpIcon />
+            </HeaderButton>
+          }
+        >
+          Поисковая система 2.0
+        </PanelHeader>
         {!this.props.is_loading && (
           <>
             <Group title="Список действий">
@@ -63,7 +75,7 @@ class App extends Component {
                 )}
               </Div>
             </Group>
-            <Group title="Пожертвование">
+            <Group title="Поддержание проекта">
               <Div>
                 <Button
                   level="commerce"
@@ -78,6 +90,17 @@ class App extends Component {
                   }
                 >
                   Поддержать проект
+                </Button>
+              </Div>
+
+              <Div>
+                <Button
+                  level="commerce"
+                  size="xl"
+                  before={<Icon24Advertising />}
+                  onClick={() => this.props.publicationStory()}
+                >
+                  Принять участие в рекламе
                 </Button>
               </Div>
             </Group>

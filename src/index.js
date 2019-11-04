@@ -3,19 +3,23 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import { Provider } from "react-vuex";
+import store from "./store";
 import vkConnect from "@vkontakte/vk-connect";
 
-var debug_app = JSON.parse(window.localStorage.getItem("debug_app"));
 vkConnect.subscribe(r => {
-  if (debug_app) {
-    console.log(r);
-  }
   if (r.detail.type === "VKWebAppUpdateConfig") {
     document.body.setAttribute("scheme", r.detail.data.scheme);
   }
+  //console.log(r.detail);
 });
 vkConnect.send("VKWebAppInit", {});
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root")
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

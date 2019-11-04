@@ -15,7 +15,16 @@ import version from "../version.txt";
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { version: 0 };
+    this.state = {
+      version: 0,
+      slideIndex: 0,
+      image_urls: [
+        "https://psv4.userapi.com/c848032/u258201990/docs/d7/cbd9cbf29dca/GRAF_1572422952946.png?extra=9uUK0AuTp-fHN2Aj3w0uA45fh51mqn3FUD7OV2HBuYShkA1Z0T-IlQQOr13RVbJsYq0SVHCikKGmJYfwrphhrROuljsZZj4BdObdCE7pyhqwJS3aJ11DhrYwYP7sZUx6S98g5ztag2ufeUy53vvg_UTh",
+        "https://psv4.userapi.com/c856332/u258201990/docs/d13/41cc09c73ac2/GRAF_1572423071731.png?extra=3fLhAP22vRw48lEVnv7U8Dq-M_4JcWyfNdnxBa7fz4DCAU_1Tz93ymdU_uwi89_BiAgTad4pgfQ8_taKXaf0SOxGiY0GrL5z9oiDClTzDm3qw91v10WHNahj2q25NmbTFA83jFLkU8XVnANTHr4jyWx3",
+        "https://psv4.userapi.com/c856324/u258201990/docs/d4/0bdf9e0ccfaf/GRAF_1572431638821.png?extra=ZZHOufOoqqXIhO3F0wtUpLyM2XALQO3Llq_nlmlb3StIQynCGKC-GAA7KO9tJUR8LVVIYAJImzz_Nlu4XBa_tk0Go_RkTwhitN_IZskdC4Imj_WrEuXczXejR7KxnPe0xl8NdASCYmFQd3tbUy7CjQ2N",
+        "https://psv4.userapi.com/c848236/u258201990/docs/d18/e50108c5f954/GRAF_1572431959018.png?extra=lY3RqADzSzDRmI0lNo0x-X1WSbuUEt5vVwSaT5FK6ooG6h-vztXYPDl-Vs2d7oI6Or2PhKCJm5cboSpxD8nhEyP7faikfeJV0GQYrxUY6ngB-6gFBBUTuO2JHMgBEmAKRw0Kf52jJtRVV2_xp-Z9RAnH"
+      ]
+    };
   }
   render() {
     return (

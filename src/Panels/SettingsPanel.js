@@ -6,7 +6,6 @@ import {
   Panel,
   PanelHeader,
   Group,
-  RangeSlider,
   Select,
   FormStatus,
   Input,
@@ -37,19 +36,90 @@ class App extends Component {
       has_photos: [
         { id: 0, title: "Без разницы" },
         { id: 1, title: "Требуется" }
+      ],
+      Neededs: [
+        { id: 0, title: "Не учитывать" },
+        { id: 1, title: "Учитывать" }
+      ],
+      blacklisteds: [
+        { id: 0, title: "Не находишься у него в списке" },
+        { id: 1, title: "Находишься у него в списке" }
+      ],
+      blacklisted_by_mes: [
+        { id: 0, title: "Не находится в твоем черном списке" },
+        { id: 1, title: "Находится в твоем черном списке" }
+      ],
+      can_send_friend_requests: [
+        { id: 0, title: "Ты не можешь кинуть заявку в друзья" },
+        { id: 1, title: "Ты можешь кинуть заявку в друзья" }
+      ],
+      can_write_private_messages: [
+        { id: 0, title: "Ты не можешь писать ему в личные сообщения" },
+        { id: 1, title: "Ты можешь писать ему в личные сообщения" }
+      ],
+      is_closeds: [
+        { id: 0, title: "Страница не закрыта" },
+        { id: 1, title: "Страница закрыта" }
       ]
     };
   }
+
+  getSelect(title, needed, callback_needed, status, callback_status, statuses) {
+    return (
+      <FormLayoutGroup top={title}>
+        <Select
+          value={needed}
+          onChange={e => {
+            callback_needed(parseInt(e.target.value));
+          }}
+        >
+          {this.state.Neededs.map(r => (
+            <option key={r.id} value={r.id}>
+              {r.title}
+            </option>
+          ))}
+        </Select>
+        {!!needed && (
+          <Select
+            value={status}
+            onChange={e => {
+              callback_status(parseInt(e.target.value));
+            }}
+          >
+            {statuses.map(r => (
+              <option key={r.id} value={r.id}>
+                {r.title}
+              </option>
+            ))}
+          </Select>
+        )}
+      </FormLayoutGroup>
+    );
+  }
+
   render() {
     const {
       onCityUpdate,
       onCountryUpdate,
       onSexUpdate,
-      onYearUpdate,
+      onFromYearUpdate,
+      onToYearUpdate,
       onStatusUpdate,
       onRangeDateUpdate,
       onHasPhotoUpdate,
+      onDateNeededUpdate,
+      onBlacklistedByMeUpdate,
+      onBlacklistedUpdate,
+      onCanSendFriendRequestUpdate,
+      onCanWritePrivateMessageUpdate,
+      onIsClosedUpdate,
+      onBlacklistedByMeNeededUpdate,
+      onBlacklistedNeededUpdate,
+      onCanSendFriendRequestNeededUpdate,
+      onCanWritePrivateMessageNeededUpdate,
+      onIsClosedNeededUpdate,
       onQUpdate,
+      onBack,
       countrys,
       cities,
       has_photos,
@@ -63,13 +133,24 @@ class App extends Component {
       status,
       q,
       has_photo,
-      rangeDate
+      blacklisted_by_me,
+      blacklisted,
+      can_send_friend_request,
+      can_write_private_message,
+      is_closed,
+      rangeDate,
+      blacklisted_needed,
+      blacklisted_by_me_needed,
+      can_send_friend_request_needed,
+      can_write_private_message_needed,
+      is_closed_needed,
+      dateNeeded
     } = { ...this.props, ...this.state };
     return (
       <Panel id="settings">
         <PanelHeader
           left={
-            <HeaderButton onClick={() => this.props.onBack()}>
+            <HeaderButton onClick={() => onBack()}>
               <BackIcon />
             </HeaderButton>
           }
@@ -84,14 +165,33 @@ class App extends Component {
               onChange={e => onQUpdate(e.target.value)}
               top="Введите имя или фамилию(Только для продвинутых пользователей)"
             />
-            <RangeSlider
-              min={0}
-              max={100}
-              step={1}
-              top={`Возраст от ${from_year} до ${to_year}`}
-              defaultValue={[Number(from_year), Number(to_year)]}
-              onChange={r => onYearUpdate(r)}
-            />
+            <FormLayoutGroup
+              top={`Выбор возраста от ${from_year} до ${to_year}`}
+            >
+              <Select
+                top={`Выбор возраста от ${from_year} до ${to_year}`}
+                value={from_year}
+                onChange={e => onFromYearUpdate(parseInt(e.target.value))}
+              >
+                {Array.from(Array(to_year).keys()).map(r => (
+                  <option value={r} key={r}>
+                    {r} лет
+                  </option>
+                ))}
+              </Select>
+              <Select
+                value={to_year}
+                onChange={e => onToYearUpdate(parseInt(e.target.value))}
+              >
+                {Array.from(Array(100 - from_year).keys())
+                  .map(r => r + from_year + 1)
+                  .map(r => (
+                    <option value={r} key={r}>
+                      {r} лет
+                    </option>
+                  ))}
+              </Select>
+            </FormLayoutGroup>
             <Select
               placeholder="Выберите страну"
               top="Выбор страны"
@@ -159,28 +259,84 @@ class App extends Component {
         </Group>
         <Group title="Параметры дополнительного фильтра">
           <FormLayout>
-            <FormLayoutGroup top="Временной диапозон онлайна">
-              <Input
-                type="text"
-                defaultValue={`${rangeDate[0]}-${rangeDate[1]}`}
+            <FormLayoutGroup top="Временной диапазон онлайна">
+              <Select
+                value={dateNeeded}
                 onChange={e => {
-                  onRangeDateUpdate(
-                    e.target.value.split("-").map(r => parseInt(r))
-                  );
+                  onDateNeededUpdate(!!parseInt(e.target.value));
                 }}
-                top="Количество секунд"
-              />
-              <FormStatus>
-                Инструкция использования данного поля. Он принимает
-                исключительно целочисленные значения в секундах. Напомню, вк
-                обновляет онлайн каждые 5 минут тоесть гибкость в милисекундах
-                выражать смысла нет, только в секундах.
-                <br /> Перейдем к формату: (от секунд)-(до секунд)
-                <br /> Например если нам нужно найти человека который будет
-                находиться онлайн не позже чем 1 день:
-                <br /> 0-86400
-              </FormStatus>
+              >
+                {this.state.Neededs.map(r => (
+                  <option key={r.id} value={r.id}>
+                    {r.title}
+                  </option>
+                ))}
+              </Select>
+              {!!dateNeeded && (
+                <>
+                  <Input
+                    type="text"
+                    defaultValue={`${rangeDate[0]}-${rangeDate[1]}`}
+                    onChange={e => {
+                      onRangeDateUpdate(
+                        e.target.value.split("-").map(r => parseInt(r))
+                      );
+                    }}
+                    top="Количество секунд"
+                  />
+                  <FormStatus>
+                    Инструкция использования данного поля. Он принимает
+                    исключительно целочисленные значения в секундах. Напомню, вк
+                    обновляет онлайн каждые 5 минут тоесть гибкость в
+                    милисекундах выражать смысла нет, только в секундах.
+                    <br /> Перейдем к формату: (от секунд)-(до секунд)
+                    <br /> Например если нам нужно найти человека который будет
+                    находиться онлайн не позже чем 1 день:
+                    <br /> 0-86400
+                  </FormStatus>
+                </>
+              )}
             </FormLayoutGroup>
+            {this.getSelect(
+              "Наличие тебя в его черном списке",
+              blacklisted_needed,
+              onBlacklistedNeededUpdate,
+              blacklisted,
+              onBlacklistedUpdate,
+              this.state.blacklisteds
+            )}
+            {this.getSelect(
+              "Наличие его в твоем черном списке",
+              blacklisted_by_me_needed,
+              onBlacklistedByMeNeededUpdate,
+              blacklisted_by_me,
+              onBlacklistedByMeUpdate,
+              this.state.blacklisted_by_mes
+            )}
+            {this.getSelect(
+              "Возможность писать ему личные сообщения",
+              can_write_private_message_needed,
+              onCanWritePrivateMessageNeededUpdate,
+              can_write_private_message,
+              onCanWritePrivateMessageUpdate,
+              this.state.can_write_private_messages
+            )}
+            {this.getSelect(
+              "Возможность добавить его в друзья",
+              can_send_friend_request_needed,
+              onCanSendFriendRequestNeededUpdate,
+              can_send_friend_request,
+              onCanSendFriendRequestUpdate,
+              this.state.can_send_friend_requests
+            )}
+            {this.getSelect(
+              "Закрытость страницы",
+              is_closed_needed,
+              onIsClosedNeededUpdate,
+              is_closed,
+              onIsClosedUpdate,
+              this.state.is_closeds
+            )}
           </FormLayout>
         </Group>
       </Panel>
